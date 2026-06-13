@@ -35,6 +35,22 @@ static float sVertexBuffer[] =
 };
 // clang-format on
 
+// Helper function to get D3D11 filter type from scale filter option
+static D3D11_FILTER GetD3D11Filter(int scaleFilter)
+{
+    switch(scaleFilter)
+    {
+        case 0:  // Nearest neighbor (default)
+            return D3D11_FILTER_MIN_MAG_MIP_POINT;
+        case 1:  // Bilinear
+            return D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+        case 2:  // Full Linear
+            return D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        default:
+            return D3D11_FILTER_MIN_MAG_MIP_POINT;
+    }
+}
+
 void ShaderPass::Initialize(winrt::com_ptr<ID3D11Device> device, winrt::com_ptr<ID3D11DeviceContext> context)
 {
     m_device  = device;
@@ -210,6 +226,34 @@ void ShaderPass::UpdateMVP(float sx, float sy, float tx, float ty)
     m_modelViewProj.m[1][1] = sy;
     m_modelViewProj.m[3][0] = tx;
     m_modelViewProj.m[3][1] = ty;
+}
+
+void ShaderPass::SetScaleFilter(int scaleFilter)
+{
+    // Update all sampler states with the new filter type
+    D3D11_FILTER newFilter = GetD3D11Filter(scaleFilter);
+    
+    for(auto& samplerPair : m_samplers)
+    {
+        D3D11_SAMPLER_DESC samplerDesc = {};
+        samplerDesc.Filter         = newFilter;
+        samplerDesc.AddressU       = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.AddressV       = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.AddressW       = D3D11_TEXTURE_ADDRESS_BORDER;
+        samplerDesc.MaxLOD         = D3D11_FLOAT32_MAX;
+        samplerDesc.BorderColor[0] = 0.0f;
+        samplerDesc.BorderColor[1] = 0.0f;
+        samplerDesc.BorderColor[2] = 0.0f;
+        samplerDesc.BorderColor[3] = 0.0f;
+        samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+
+        winrt::com_ptr<ID3D11SamplerState> newSamplerState;
+        hr = m_device->CreateSamplerState(&samplerDesc, newSamplerState.put());
+        if(SUCCEEDED(hr))
+        {
+            samplerPair.second = newSamplerState;
+        }
+    }
 }
 
 ShaderPass::~ShaderPass()
