@@ -23,15 +23,13 @@ public:
     void Render(std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>>& resources, int frameCount, int boxX, int boxY);
     void Render(ID3D11ShaderResourceView* sourceView, std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>>& resources, int frameCount, int boxX, int boxY);
     void RenderCursor(float x, float y, float w, float h, winrt::com_ptr<ID3D11ShaderResourceView> cursorView);
-    void
-    Resize(int sourceWidth, int sourceHeight, int destWidth, int destHeight, const std::map<std::string, float4>& textureSizes, const std::vector<std::array<UINT, 4>>& passSizes);
+    void Resize(int sourceWidth, int sourceHeight, int destWidth, int destHeight, const std::map<std::string, float4>& textureSizes, const std::vector<std::array<UINT, 4>>& passSizes);
     void UpdateMVP(float sx, float sy, float tx, float ty);
     void SetScaleFilter(int scaleFilter);
     void Initialize(winrt::com_ptr<ID3D11Device> device, winrt::com_ptr<ID3D11DeviceContext> context);
     void Render(std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>>& resources, int frameCount, int boxX, int boxY);
     void Render(ID3D11ShaderResourceView* sourceView, std::map<std::string, winrt::com_ptr<ID3D11ShaderResourceView>>& resources, int frameCount, int boxX, int boxY);
     void RenderCursor(float x, float y, float w, float h, winrt::com_ptr<ID3D11ShaderResourceView> cursorView);
-    void SetScaleFilter(int scaleFilter);  // ADD THIS LINE
     void Resize(int sourceWidth, int sourceHeight, int destWidth, int destHeight, const std::map<std::string, float4>& textureSizes, const std::vector<std::array<UINT, 4>>& passSizes);
     bool RequiresFeedback() const;
     int  RequiresHistory() const;
